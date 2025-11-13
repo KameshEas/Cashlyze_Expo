@@ -10,7 +10,8 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "googleServicesFile": "./config/GoogleService-Info.plist"
+      "googleServicesFile": "./config/GoogleService-Info.plist",
+      "bundleIdentifier": "com.aspiredesignovation.Cashlyze"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,7 +22,8 @@
       },
       "googleServicesFile": "./config/google-services.json",
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.aspiredesignovation.Cashlyze"
     },
     "web": {
       "output": "static",
