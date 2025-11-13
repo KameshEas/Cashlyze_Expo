@@ -3,12 +3,13 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, Text } from 'react-native';
 
 export default function LoginScreen() {
   const colorScheme = useColorScheme();
+  const router = useRouter();
 
   return (
     <ThemedView style={styles.container}>
@@ -25,7 +26,7 @@ export default function LoginScreen() {
         placeholderTextColor={Colors[colorScheme ?? 'light'].subtleText}
         secureTextEntry
       />
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/(tabs)')}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
       <Link href="/(auth)/signup" style={styles.link}>
