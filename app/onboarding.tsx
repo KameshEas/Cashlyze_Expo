@@ -1,40 +1,110 @@
 
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
+import React, { useRef, useState } from 'react';
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+const { width } = Dimensions.get('window');
+
+const onboardingScreens = [
+  {
+    key: '1',
+    icon: require('@/assets/images/splash-icon.png'),
+    title: 'Welcome to Cashlyze',
+    subtitle: 'Your smart companion for effortless money management.',
+    description:
+      'Track transactions, understand your spending, and take control of your financial future—all in one place.',
+  },
+  {
+    key: '2',
+    icon: require('@/assets/images/splash-icon.png'), // Using the same icon
+    title: 'See Where Your Money Goes',
+    subtitle: 'Automatic tracking for income, expenses, and categories.',
+    description:
+      'Visual charts and breaking-down insights help you understand your habits and make better decisions every day.',
+  },
+  {
+    key: '3',
+    icon: require('@/assets/images/splash-icon.png'), // Using the new bell icon
+    title: 'Stay Ahead With Smart Alerts',
+    subtitle: 'Get notified about big transactions and upcoming bills.',
+    description:
+      "Cashlyze keeps you informed so you never miss what's important to your financial health.",
+  },
+];
 
 const OnboardingScreen = () => {
   const router = useRouter();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const flatListRef = useRef<FlatList>(null);
 
-  const handleGetStarted = () => {
-    router.replace('/(tabs)');
+  const handleNext = () => {
+    if (currentIndex < onboardingScreens.length - 1) {
+      const nextIndex = currentIndex + 1;
+      flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
+    } else {
+      router.replace('/(tabs)');
+    }
   };
+
+  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const contentOffsetX = e.nativeEvent.contentOffset.x;
+    const index = Math.round(contentOffsetX / width);
+    setCurrentIndex(index);
+  };
+
+  const renderItem = ({ item }: { item: (typeof onboardingScreens)[0] }) => (
+    <View style={styles.slide}>
+      <View style={styles.iconContainer}>
+        <Image source={item.icon} style={styles.logo} />
+      </View>
+      <Text style={styles.title}>{item.title}</Text>
+      <Text style={styles.subtitle}>{item.subtitle}</Text>
+      <Text style={styles.description}>{item.description}</Text>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.iconContainer}>
-          <Image
-            source={require('@/assets/images/splash-icon.png')}
-            style={styles.logo}
-          />
-        </View>
-        <Text style={styles.title}>Welcome to Cashlyze</Text>
-        <Text style={styles.subtitle}>
-          Your smart companion for effortless money management.
-        </Text>
-        <Text style={styles.description}>
-          Track transactions, understand your spending, and take control of your financial future—all in one place.
-        </Text>
-      </View>
+      <FlatList
+        ref={flatListRef}
+        data={onboardingScreens}
+        renderItem={renderItem}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={onScroll}
+        keyExtractor={(item) => item.key}
+        bounces={false}
+        scrollEventThrottle={16}
+      />
       <View style={styles.footer}>
         <View style={styles.pagination}>
-          <View style={[styles.dot, styles.activeDot]} />
-          <View style={styles.dot} />
-          <View style={styles.dot} />
+          {onboardingScreens.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.dot,
+                currentIndex === index && styles.activeDot,
+              ]}
+            />
+          ))}
         </View>
-        <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
-          <Text style={styles.buttonText}>Get Started</Text>
+        <TouchableOpacity style={styles.button} onPress={handleNext}>
+          <Text style={styles.buttonText}>
+            {currentIndex === onboardingScreens.length - 1
+              ? 'Start Now'
+              : 'Next'}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -44,15 +114,15 @@ const OnboardingScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
     backgroundColor: '#0A192F',
-    justifyContent: 'space-between',
   },
-  content: {
+  slide: {
+    width: width,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 40,
+    paddingBottom: 150, // Adjust this to move content up
   },
   iconContainer: {
     width: 90,
@@ -89,7 +159,12 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   footer: {
-    paddingBottom: 40,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 24,
+    paddingBottom: 60, // Safe area for home indicator
   },
   pagination: {
     flexDirection: 'row',
@@ -105,6 +180,7 @@ const styles = StyleSheet.create({
   },
   activeDot: {
     backgroundColor: '#3A8DFF',
+    width: 20,
   },
   button: {
     backgroundColor: '#3A8DFF',
