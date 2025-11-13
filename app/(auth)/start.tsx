@@ -1,8 +1,26 @@
 
 import { Icon } from '@/components/Icon';
+import { ThemedText } from '@/components/themed-text';
+import Checkbox from 'expo-checkbox';
 import { useRouter } from 'expo-router';
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Linking } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from 'react-native';
+import * as SecureStore from 'expo-secure-store';
+import { auth, db } from '@/config/firebase'; // Make sure this path is correct
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import Toast from '@/components/Toast';
 
 const DARK_BLUE = '#0A192F';
 const NAVY_BLUE = '#102A4C';
@@ -13,30 +31,98 @@ const BORDER_COLOR = '#1F3A5F';
 
 const StartScreen = () => {
   const router = useRouter();
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  useEffect(() => {
+    const getEmail = async () => {
+      try {
+        const savedEmail = await SecureStore.getItemAsync('email');
+        if (savedEmail) {
+          setEmail(savedEmail);
+          setRememberMe(true);
+        }
+      } catch (error) {
+        console.error('Failed to load email', error);
+      }
+    };
+    getEmail();
+  }, []);
+
+  const handleRememberMe = async (value) => {
+    setRememberMe(value);
+    if (value) {
+      try {
+        await SecureStore.setItemAsync('email', email);
+      } catch (error) {
+        console.error('Failed to save email', error);
+      }
+    } else {
+      try {
+        await SecureStore.deleteItemAsync('email');
+      } catch (error) {
+        console.error('Failed to delete email', error);
+      }
+    }
+  };
+
+  const handleAuth = async () => {
+    try {
+      if (isLogin) {
+        await signInWithEmailAndPassword(auth, email, password);
+        setToastMessage('Login Successful');
+        setToastVisible(true);
+      } else {
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        const user = userCredential.user;
+        if (user) {
+          await updateProfile(user, { displayName: name });
+          await setDoc(doc(db, 'users', user.uid), {
+            name,
+            email,
+          });
+        }
+        setToastMessage('Signup Successful');
+        setToastVisible(true);
+      }
+    } catch (error) {
+      Alert.alert('Authentication Error', error.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
+      <Toast
+        visible={toastVisible}
+        message={toastMessage}
+        onHide={() => {
+          setToastVisible(false);
+          router.replace('/(tabs)');
+        }}
+      />
       <View style={styles.iconContainer}>
         <Icon name="BarChart" size={50} color="#3A8DFF" />
       </View>
-      <Text style={styles.title}>Get started with Cashlyze</Text>
-      <Text style={styles.subtitle}>Create an account or sign in to continue.</Text>
+      <Text style={styles.title}>{isLogin ? 'Welcome Back' : 'Create Account'}</Text>
 
-      <TouchableOpacity style={styles.googleButton}>
-        <Icon name="Chrome" size={20} color="#000" style={{ marginRight: 12 }}/>
-        <Text style={styles.googleButtonText}>Continue with Google</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.appleButton}>
-        <Icon name="Apple" size={20} color="#FFF" style={{ marginRight: 12 }} />
-        <Text style={styles.appleButtonText}>Continue with Apple</Text>
-      </TouchableOpacity>
-
-      <View style={styles.dividerContainer}>
-        <View style={styles.divider} />
-        <Text style={styles.orText}>or</Text>
-        <View style={styles.divider} />
-      </View>
+      {!isLogin && (
+        <TextInput
+          style={styles.input}
+          placeholder="Name"
+          placeholderTextColor={TEXT_SECONDARY}
+          value={name}
+          onChangeText={setName}
+        />
+      )}
 
       <TextInput
         style={styles.input}
@@ -44,23 +130,41 @@ const StartScreen = () => {
         placeholderTextColor={TEXT_SECONDARY}
         keyboardType="email-address"
         autoCapitalize="none"
+        value={email}
+        onChangeText={setEmail}
       />
 
-      <TouchableOpacity style={styles.emailButton} onPress={() => router.push('/(auth)/login')}>
-        <Text style={styles.emailButtonText}>Continue with Email</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        placeholderTextColor={TEXT_SECONDARY}
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
+
+      {isLogin && (
+        <View style={styles.optionsContainer}>
+          <View style={styles.checkboxContainer}>
+            <Checkbox value={rememberMe} onValueChange={handleRememberMe} />
+            <ThemedText style={styles.rememberMeText}>Remember Me</ThemedText>
+          </View>
+          <TouchableOpacity onPress={() => router.push('/(auth)/forgot-password')}>
+            <Text style={styles.link}>Forgot password?</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <TouchableOpacity style={styles.emailButton} onPress={handleAuth}>
+        <Text style={styles.emailButtonText}>{isLogin ? 'Login' : 'Sign Up'}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.footerText}>
-        By continuing, you agree to Cashlyze's{' '}
-        <Text style={styles.link} onPress={() => Linking.openURL('#')}>
-          Terms of Service
-        </Text>{' '}
-        and{' '}
-        <Text style={styles.link} onPress={() => Linking.openURL('#')}>
-          Privacy Policy
+      <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
+        <Text style={styles.footerText}>
+          {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
+          <Text style={styles.link}>{isLogin ? 'Sign Up' : 'Sign In'}</Text>
         </Text>
-        .
-      </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -87,62 +191,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: TEXT_PRIMARY,
     textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: TEXT_SECONDARY,
-    textAlign: 'center',
     marginBottom: 40,
-  },
-  googleButton: {
-    flexDirection: 'row',
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    marginBottom: 16,
-  },
-  googleButtonText: {
-    color: '#000',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  appleButton: {
-    flexDirection: 'row',
-    backgroundColor: '#000',
-    borderRadius: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: '#FFF'
-  },
-  appleButtonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: 24,
-  },
-  divider: {
-    flex: 1,
-    height: 1,
-    backgroundColor: BORDER_COLOR,
-  },
-  orText: {
-    color: TEXT_SECONDARY,
-    marginHorizontal: 16,
   },
   input: {
     backgroundColor: NAVY_BLUE,
@@ -172,11 +221,26 @@ const styles = StyleSheet.create({
   footerText: {
     color: TEXT_SECONDARY,
     textAlign: 'center',
-    fontSize: 12,
+    fontSize: 14,
   },
   link: {
     color: LIGHT_BLUE,
     textDecorationLine: 'underline',
+  },
+  optionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 16,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rememberMeText: {
+    marginLeft: 8,
+    color: TEXT_SECONDARY,
   },
 });
 
