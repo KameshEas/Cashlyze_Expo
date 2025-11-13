@@ -1,10 +1,10 @@
 
+import { Icon, IconName } from '@/components/Icon';
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import {
   Dimensions,
   FlatList,
-  Image,
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
@@ -15,10 +15,16 @@ import {
 
 const { width } = Dimensions.get('window');
 
-const onboardingScreens = [
+const onboardingScreens: {
+  key: string;
+  icon: IconName;
+  title: string;
+  subtitle: string;
+  description: string;
+}[] = [
   {
     key: '1',
-    icon: require('@/assets/images/splash-icon.png'),
+    icon: 'Wallet',
     title: 'Welcome to Cashlyze',
     subtitle: 'Your smart companion for effortless money management.',
     description:
@@ -26,7 +32,7 @@ const onboardingScreens = [
   },
   {
     key: '2',
-    icon: require('@/assets/images/splash-icon.png'), // Using the same icon
+    icon: 'PieChart',
     title: 'See Where Your Money Goes',
     subtitle: 'Automatic tracking for income, expenses, and categories.',
     description:
@@ -34,7 +40,7 @@ const onboardingScreens = [
   },
   {
     key: '3',
-    icon: require('@/assets/images/splash-icon.png'), // Using the new bell icon
+    icon: 'Bell',
     title: 'Stay Ahead With Smart Alerts',
     subtitle: 'Get notified about big transactions and upcoming bills.',
     description:
@@ -65,7 +71,7 @@ const OnboardingScreen = () => {
   const renderItem = ({ item }: { item: (typeof onboardingScreens)[0] }) => (
     <View style={styles.slide}>
       <View style={styles.iconContainer}>
-        <Image source={item.icon} style={styles.logo} />
+        <Icon name={item.icon} size={50} color="#3A8DFF" />
       </View>
       <Text style={styles.title}>{item.title}</Text>
       <Text style={styles.subtitle}>{item.subtitle}</Text>
@@ -132,12 +138,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 40,
-  },
-  logo: {
-    width: 50,
-    height: 50,
-    resizeMode: 'contain',
-    tintColor: '#3A8DFF',
   },
   title: {
     fontSize: 28,

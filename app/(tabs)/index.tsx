@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Icon } from '@/components/Icon';
 
 // Placeholder Data
 const userData = {
@@ -20,14 +20,14 @@ const alerts = [
     id: '1',
     type: 'Large transaction',
     details: '$450.00 at Best Buy',
-    icon: 'exclamationmark.circle.fill',
+    icon: 'AlertCircle',
     iconColor: '#FF6B6B',
   },
   {
     id: '2',
     type: 'Upcoming bill',
     details: 'Netflix is due tomorrow',
-    icon: 'calendar',
+    icon: 'Calendar',
     iconColor: '#6BDBFF',
   },
 ];
@@ -49,7 +49,7 @@ const recentTransactions = [
     name: 'Best Buy',
     date: 'Today',
     amount: '-$450.00',
-    icon: 'cart.fill',
+    icon: 'ShoppingCart',
     iconBg: '#1C2A44',
   },
   {
@@ -57,7 +57,7 @@ const recentTransactions = [
     name: 'Starbucks',
     date: 'Yesterday',
     amount: '-$5.50',
-    icon: 'cup.and.saucer.fill',
+    icon: 'Coffee',
     iconBg: '#3A2C1C',
   },
   {
@@ -65,7 +65,7 @@ const recentTransactions = [
     name: 'Paycheck',
     date: 'Sep 15, 2023',
     amount: '+$2,100.00',
-    icon: 'arrow.up',
+    icon: 'ArrowUp',
     iconBg: '#1A3A2F',
   },
 ];
@@ -90,7 +90,7 @@ export default function HomeScreen() {
             />
             <ThemedText type="title" style={styles.headerText}>Hello, {userData.name}!</ThemedText>
           </View>
-          <IconSymbol name="bell.fill" size={24} color={TEXT_SECONDARY} />
+          <Icon name="Bell" size={24} color={TEXT_SECONDARY} />
         </ThemedView>
 
         {/* Alerts */}
@@ -101,7 +101,7 @@ export default function HomeScreen() {
               <ThemedView key={alert.id} style={styles.alertCard}>
                 <View style={styles.alertHeader}>
                   <ThemedText style={styles.alertType}>{alert.type}</ThemedText>
-                  <IconSymbol name={alert.icon as any} size={20} color={alert.iconColor} />
+                  <Icon name={alert.icon as any} size={20} color={alert.iconColor} />
                 </View>
                 <ThemedText style={styles.alertDetails}>{alert.details}</ThemedText>
                 <TouchableOpacity style={styles.alertButton}>
@@ -161,7 +161,7 @@ export default function HomeScreen() {
               <View key={tx.id} style={[styles.transactionItem, index < recentTransactions.length - 1 && styles.transactionDivider]}>
                 <View style={styles.transactionLeft}>
                   <View style={[styles.transactionIcon, { backgroundColor: tx.iconBg }]}>
-                    <IconSymbol name={tx.icon as any} size={20} color={TEXT_PRIMARY} />
+                    <Icon name={tx.icon as any} size={20} color={TEXT_PRIMARY} />
                   </View>
                   <View>
                     <ThemedText style={styles.transactionName}>{tx.name}</ThemedText>
@@ -179,7 +179,7 @@ export default function HomeScreen() {
 
       {/* FAB */}
       <TouchableOpacity style={styles.fab}>
-        <IconSymbol name="plus" size={32} color="white" />
+        <Icon name="Plus" size={32} color="white" />
       </TouchableOpacity>
     </View>
   );
