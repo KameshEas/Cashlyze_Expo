@@ -1,14 +1,38 @@
-import { View, type ViewProps } from 'react-native';
 
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { View, type ViewProps } from 'react-native';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { PremiumTheme } from '@/constants/theme';
 
 export type ThemedViewProps = ViewProps & {
-  lightColor?: string;
-  darkColor?: string;
+  lightColor?: string; // For one-off overrides
+  darkColor?: string;  // For one-off overrides
+  level?: 'background' | 'surface' | 'surface2'; // Use predefined theme surfaces
+  shadow?: 'soft' | 'medium'; // Use predefined theme shadows
 };
 
-export function ThemedView({ style, lightColor, darkColor, ...otherProps }: ThemedViewProps) {
-  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+export function ThemedView({
+  style,
+  lightColor,
+  darkColor,
+  level,
+  shadow,
+  ...otherProps
+}: ThemedViewProps) {
+  const theme = useColorScheme() ?? 'light';
 
-  return <View style={[{ backgroundColor }, style]} {...otherProps} />;
+  // Determine the background color
+  let colorToUse: string;
+
+  if (theme === 'light') {
+    colorToUse = lightColor ?? PremiumTheme.colors.light[level ?? 'background'];
+  } else {
+    colorToUse = darkColor ?? PremiumTheme.colors.dark[level ?? 'background'];
+  }
+  
+  const backgroundColor = colorToUse;
+
+  // Get shadow styles from the theme
+  const shadowStyle = shadow ? PremiumTheme.shadows[shadow] : {};
+
+  return <View style={[{ backgroundColor }, shadowStyle, style]} {...otherProps} />;
 }

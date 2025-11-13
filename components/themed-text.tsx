@@ -1,32 +1,49 @@
-import { StyleSheet, Text, type TextProps } from 'react-native';
 
+import { StyleSheet, Text, type TextProps } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { PremiumTheme } from '@/constants/theme';
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
+  type?: 'title' | 'section' | 'body' | 'caption' | 'link' | 'bodySemiBold';
 };
 
 export function ThemedText({
   style,
   lightColor,
   darkColor,
-  type = 'default',
+  type = 'body', // Default to 'body' for general text
   ...rest
 }: ThemedTextProps) {
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  // Use new theme colors
+  const color = useThemeColor({ light: PremiumTheme.colors.light.text, dark: PremiumTheme.colors.dark.text }, 'text');
+
+  // Determine the font style based on the type
+  const getStyleForType = () => {
+    switch (type) {
+      case 'title':
+        return styles.title;
+      case 'section':
+        return styles.section;
+      case 'caption':
+        return styles.caption;
+      case 'link':
+        return styles.link;
+      case 'bodySemiBold':
+        return styles.bodySemiBold;
+      case 'body':
+      default:
+        return styles.body;
+    }
+  };
 
   return (
     <Text
       style={[
         { color },
-        type === 'default' ? styles.default : undefined,
-        type === 'title' ? styles.title : undefined,
-        type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
-        type === 'subtitle' ? styles.subtitle : undefined,
-        type === 'link' ? styles.link : undefined,
-        style,
+        getStyleForType(), // Apply font styles from the theme
+        style, // Allow overriding with custom styles
       ]}
       {...rest}
     />
@@ -34,27 +51,39 @@ export function ThemedText({
 }
 
 const styles = StyleSheet.create({
-  default: {
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  defaultSemiBold: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: '600',
-  },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    lineHeight: 32,
+    fontFamily: PremiumTheme.fonts.family,
+    fontSize: PremiumTheme.fonts.sizes.title,
+    fontWeight: PremiumTheme.fonts.weights.semiBold,
+    letterSpacing: 0.2,
   },
-  subtitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  section: {
+    fontFamily: PremiumTheme.fonts.family,
+    fontSize: PremiumTheme.fonts.sizes.section,
+    fontWeight: PremiumTheme.fonts.weights.bold,
+  },
+  body: {
+    fontFamily: PremiumTheme.fonts.family,
+    fontSize: PremiumTheme.fonts.sizes.body,
+    fontWeight: PremiumTheme.fonts.weights.regular,
+    lineHeight: 24,
+  },
+  bodySemiBold: {
+    fontFamily: PremiumTheme.fonts.family,
+    fontSize: PremiumTheme.fonts.sizes.body,
+    fontWeight: PremiumTheme.fonts.weights.semiBold,
+    lineHeight: 24,
+  },
+  caption: {
+    fontFamily: PremiumTheme.fonts.family,
+    fontSize: PremiumTheme.fonts.sizes.caption,
+    fontWeight: PremiumTheme.fonts.weights.medium,
   },
   link: {
-    lineHeight: 30,
-    fontSize: 16,
-    color: '#0a7ea4',
+    fontFamily: PremiumTheme.fonts.family,
+    fontSize: PremiumTheme.fonts.sizes.body,
+    fontWeight: PremiumTheme.fonts.weights.medium,
+    color: '#6F86FF', // Using a primary color for links
+    textDecorationLine: 'underline',
   },
 });

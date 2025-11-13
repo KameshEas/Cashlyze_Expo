@@ -1,37 +1,39 @@
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Link, useRouter } from 'expo-router';
-import React from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, Text } from 'react-native';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
 export default function LoginScreen() {
-  const colorScheme = useColorScheme();
   const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText style={styles.title}>Cashlyze</ThemedText>
-      <ThemedText style={styles.tagline}>Know where your money flows.</ThemedText>
+      <ThemedText style={styles.title}>Login</ThemedText>
       <TextInput
-        style={[styles.input, { color: Colors[colorScheme ?? 'light'].text, borderColor: Colors[colorScheme ?? 'light'].border }]}
+        style={styles.input}
         placeholder="Email"
-        placeholderTextColor={Colors[colorScheme ?? 'light'].subtleText}
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
       <TextInput
-        style={[styles.input, { color: Colors[colorScheme ?? 'light'].text, borderColor: Colors[colorScheme ?? 'light'].border }]}
+        style={styles.input}
         placeholder="Password"
-        placeholderTextColor={Colors[colorScheme ?? 'light'].subtleText}
+        value={password}
+        onChangeText={setPassword}
         secureTextEntry
       />
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/(tabs)')}>
-        <Text style={styles.buttonText}>Login</Text>
+      <TouchableOpacity style={styles.button} onPress={() => {}}>
+        <ThemedText style={styles.buttonText}>Login</ThemedText>
       </TouchableOpacity>
-      <Link href="/(auth)/signup" style={styles.link}>
-        <ThemedText>Don't have an account? Sign up</ThemedText>
-      </Link>
+      <TouchableOpacity onPress={() => router.push('/signup')}>
+        <ThemedText style={styles.link}>Don't have an account? Sign Up</ThemedText>
+      </TouchableOpacity>
     </ThemedView>
   );
 }
@@ -41,42 +43,35 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: '#F7FAFC',
   },
   title: {
-    fontSize: 36,
-    fontWeight: '600',
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginBottom: 24,
     textAlign: 'center',
-    color: '#0F172A',
-    marginBottom: 8,
-  },
-  tagline: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#64748B',
-    marginBottom: 48,
   },
   input: {
-    height: 48,
+    height: 50,
+    borderColor: '#E2E8F0',
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 16,
     marginBottom: 16,
-    fontSize: 16,
   },
   button: {
     backgroundColor: '#2A9D8F',
-    paddingVertical: 16,
+    padding: 16,
     borderRadius: 8,
-    alignItems: 'center',
     marginBottom: 16,
   },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   link: {
+    color: '#2A9D8F',
     textAlign: 'center',
   },
 });
