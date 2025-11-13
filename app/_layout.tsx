@@ -20,7 +20,7 @@ export default function RootLayout() {
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
           <Stack.Screen name="budget-modal" options={{ presentation: 'modal' }} />
-          <Stack.Screen name="add-transaction-modal" options={{ presentation: 'modal' }} />
+          {/* <Stack.Screen name="add-transaction-modal" options={{ presentation: 'modal' }} /> */}
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>

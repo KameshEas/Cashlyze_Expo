@@ -3,21 +3,24 @@ import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
+import { PremiumTheme } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { ThemedView } from '@/components/themed-view';
-import { TouchableOpacity } from 'react-native';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() ?? 'light';
   const router = useRouter();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: PremiumTheme.colors[colorScheme].text,
         headerShown: false,
         tabBarButton: HapticTab,
+        tabBarStyle: {
+          backgroundColor: PremiumTheme.colors[colorScheme].background,
+          borderTopColor: PremiumTheme.colors[colorScheme].border,
+          borderTopWidth: 1,
+        },
       }}>
       <Tabs.Screen
         name="index"
@@ -33,36 +36,19 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="list.bullet" color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="add"
-        options={{
-          title: 'Add',
-          tabBarIcon: ({ color }) => (
-            <ThemedView
-              style={{
-                backgroundColor: '#2A9D8F',
-                borderRadius: 99,
-                padding: 12,
-                justifyContent: 'center',
-                alignItems: 'center',
-                transform: [{ translateY: -24 }],
-              }}>
-              <IconSymbol size={32} name="plus" color="white" />
-            </ThemedView>
-          ),
-        }}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            e.preventDefault();
-            router.push('/add-transaction-modal');
-          },
-        })}
-      />
+      
       <Tabs.Screen
         name="budgets"
         options={{
           title: 'Budgets',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="chart.pie.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
         }}
       />
     </Tabs>
