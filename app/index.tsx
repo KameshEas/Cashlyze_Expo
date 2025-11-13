@@ -60,7 +60,7 @@ export default function SplashScreen() {
 
     // Navigate after animation
     const timer = setTimeout(() => {
-      router.replace('/(tabs)'); // Navigate to the main app
+      router.replace('/onboarding'); // Navigate to the main app
     }, 3000); // Total splash screen duration
 
     return () => clearTimeout(timer);
