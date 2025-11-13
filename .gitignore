@@ -41,6 +41,5 @@ app-example
 # generated native folders
 /ios
 /android
-package.json
 app/(tabs)/add.tsx
 package-lock.json
