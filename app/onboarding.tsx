@@ -58,7 +58,7 @@ const OnboardingScreen = () => {
       const nextIndex = currentIndex + 1;
       flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
     } else {
-      router.replace('/(tabs)');
+      router.replace('/(auth)/start');
     }
   };
 
@@ -108,7 +108,7 @@ const OnboardingScreen = () => {
         <TouchableOpacity style={styles.button} onPress={handleNext}>
           <Text style={styles.buttonText}>
             {currentIndex === onboardingScreens.length - 1
-              ? 'Start Now'
+              ? 'Get Started'
               : 'Next'}
           </Text>
         </TouchableOpacity>
