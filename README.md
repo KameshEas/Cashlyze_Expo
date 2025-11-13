@@ -1,53 +1,56 @@
-> Edited for use in IDX on 07/09/12
+# Cashlyze: Know Where Your Money Flows
 
-# Welcome to your Expo app 👋
+Cashlyze is a mobile-first personal finance application built with Expo and React Native. It helps you track your income and expenses, visualize your spending habits, and stay on top of your financial health.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Features
 
-## Get started
+- **Dashboard:** Get a quick overview of your spending summary, including total expenses and percentage changes.
+- **Dynamic Alerts:** Receive notifications for large transactions and upcoming bills to stay informed.
+- **Recent Transactions:** View a detailed list of your most recent financial activities.
+- **Spending Insights:** Understand your spending habits with a categorized breakdown and visual charts.
+- **Secure Authentication:** User authentication flow for signing up and logging in.
+- **Cross-Platform:** Runs on Android, iOS, and the web, thanks to Expo.
 
-#### Android
+## Tech Stack
 
-Android previews are defined as a `workspace.onStart` hook and started as a vscode task when the workspace is opened/started.
+- **Framework:** React Native with Expo
+- **Routing:** Expo Router (file-based routing)
+- **UI Components:** Custom-themed components, `react-native-chart-kit` for data visualization.
+- **Language:** TypeScript
 
-Note, if you can't find the task, either:
-- Rebuild the environment (using command palette: `IDX: Rebuild Environment`), or
-- Run `npm run android -- --tunnel` command manually run android and see the output in your terminal. The device should pick up this new command and switch to start displaying the output from it.
+## Getting Started
 
-In the output of this command/task, you'll find options to open the app in a
+To get a local copy up and running, follow these simple steps.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Prerequisites
 
-You'll also find options to open the app's developer menu, reload the app, and more.
+- Node.js and npm
+- An Android/iOS emulator or a physical device with the Expo Go app.
 
-#### Web
+### Installation & Running the App
 
-Web previews will be started and managred automatically. Use the toolbar to manually refresh.
+1.  **Install NPM packages:**
+    ```bash
+    npm install
+    ```
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+2.  **Run the development server:**
+    ```bash
+    npx expo start
+    ```
 
-## Get a fresh project
+This will open the Expo development server. You can then:
+- Press `a` to open the app in an Android emulator.
+- Press `i` to open the app in an iOS simulator.
+- Press `w` to open the app in a web browser.
+- Scan the QR code with the Expo Go app on your physical device.
 
-When you're ready, run:
+## Project Structure
 
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- **/app:** Contains all the screens and routes for the application.
+  - **(tabs):** Defines the main tab navigation (Overview, Payments, Reports, Account).
+  - **(auth):** Contains the authentication screens (Login, Sign Up).
+  - **_layout.tsx:** The root layout for the app.
+- **/components:** Reusable UI components used throughout the app.
+- **/constants:** Theme, colors, and other constant values.
+- **/assets:** Images, fonts, and other static assets.
